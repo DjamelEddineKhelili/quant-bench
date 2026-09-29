@@ -1,6 +1,6 @@
 # quant-bench
 
-![tests](https://github.com/crtnoise/quant-bench/actions/workflows/tests.yml/badge.svg)
+![tests](https://github.com/DjamelEddineKhelili/quant-bench/actions/workflows/tests.yml/badge.svg)
 
 **Weight quantization for GPT-2, written from scratch.** INT8 / INT4, per-tensor,
 per-channel, per-group, with and without zero-point, real 4-bit packing, and a
