@@ -1,0 +1,83 @@
+[
+  {
+    "name": "fp16 baseline",
+    "ppl": 30.81223351380545,
+    "bits_per_weight": 16.015625,
+    "block_MB": 170.0352,
+    "total_MB": 248.879616,
+    "tok_per_s_bound": 401.8006842312068
+  },
+  {
+    "name": "W8 per-tensor",
+    "ppl": 35.19689536400703,
+    "bits_per_weight": 8.01563404224537,
+    "block_MB": 85.10064,
+    "total_MB": 163.945056,
+    "tok_per_s_bound": 609.960449188538
+  },
+  {
+    "name": "W8 per-channel",
+    "ppl": 30.80311775808889,
+    "bits_per_weight": 8.03125,
+    "block_MB": 85.266432,
+    "total_MB": 164.110848,
+    "tok_per_s_bound": 609.3442403027495
+  },
+  {
+    "name": "W4 per-channel",
+    "ppl": 48.12161843012863,
+    "bits_per_weight": 4.03125,
+    "block_MB": 42.799104,
+    "total_MB": 121.64352,
+    "tok_per_s_bound": 822.0742050213607
+  },
+  {
+    "name": "W4 group128",
+    "ppl": 37.07331342482293,
+    "bits_per_weight": 4.140625,
+    "block_MB": 43.96032,
+    "total_MB": 122.804736,
+    "tok_per_s_bound": 814.3008425994254
+  },
+  {
+    "name": "W4 group64",
+    "ppl": 35.90336758088292,
+    "bits_per_weight": 4.265625,
+    "block_MB": 45.287424,
+    "total_MB": 124.13184,
+    "tok_per_s_bound": 805.5950834209821
+  },
+  {
+    "name": "W4 group64 + zero-pt",
+    "ppl": 32.94615613380226,
+    "bits_per_weight": 4.390625,
+    "block_MB": 46.614528,
+    "total_MB": 125.458944,
+    "tok_per_s_bound": 797.0735031852332
+  },
+  {
+    "name": "W4 group32 + zero-pt",
+    "ppl": 32.405727661129916,
+    "bits_per_weight": 4.765625,
+    "block_MB": 50.59584,
+    "total_MB": 129.440256,
+    "tok_per_s_bound": 772.5571865370847
+  },
+  {
+    "name": "W8A8 naive",
+    "ppl": 30.99006013833668,
+    "bits_per_weight": 8.03125,
+    "block_MB": 85.266432,
+    "total_MB": 164.110848,
+    "tok_per_s_bound": 609.3442403027495
+  },
+  {
+    "name": "W8A8 + outlier split",
+    "ppl": 30.86749758024312,
+    "bits_per_weight": 8.03125,
+    "block_MB": 85.266432,
+    "total_MB": 164.110848,
+    "tok_per_s_bound": 609.3442403027495,
+    "outlier_cols_pct": 0.23070441659456264
+  }
+]
