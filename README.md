@@ -13,7 +13,7 @@ is memory-bound, and the most direct lever is to make each weight smaller.
 I wanted to see for myself how far you can push that before the model
 starts talking nonsense.
 
-![perplexity vs bits](results/ppl_vs_bits.png)
+![perplexity vs bits](assets/ppl_vs_bits.png)
 
 ## Results
 
@@ -63,7 +63,7 @@ per input dimension. Most sit around 1. A handful go above 6, and they're the
 residual-stream inputs, dim 266 in 9, 480 and 64 in 7. The inputs to the last MLP
 projection peak at 43.8.
 
-![outliers](results/outliers.png)
+![outliers](assets/outliers.png)
 
 That's what breaks per-token INT8 activations: one 40 in a row full of 1s
 sets the scale, and everything else rounds to 0. The LLM.int8() fix sends the
@@ -124,4 +124,4 @@ python outliers.py              # the activation outlier analysis
 - Xiao et al., *SmoothQuant* (2022)
 
 ---
-CRTnoise · MIT
+DjamelEddineKhelili · MIT
