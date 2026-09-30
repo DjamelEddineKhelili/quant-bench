@@ -83,5 +83,9 @@ with torch.no_grad():
 check("GPT-2 surgery keeps logits (W8)", torch.allclose(out, ref, atol=2e-2), f"{(out - ref).abs().max():.3e}")
 check("GPT-2 surgery: W8 ~half the fp16 bytes", 0.45 < after / before < 0.6, f"{after / before:.2f}")
 
+# all-positive group: zero-point must stay in [0, 15] (it's stored as uint8)
+_, _, z = quantize(torch.rand(4, 64) + 1.0, 4, "group", 32, sym=False)
+check("zero-point stays in range for an all-positive group", bool(((z >= 0) & (z <= 15)).all()), f"{z.flatten()[:4]}")
+
 print(f"\n{'all good' if not fails else f'{fails} failing'}")
 raise SystemExit(1 if fails else 0)

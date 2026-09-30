@@ -17,6 +17,19 @@ import torch.nn.functional as F
 
 
 # ---------------------------------------------------------------- core
+def group_view(w, granularity, group_size=64):
+    """reshape w so that each ROW of the result shares one scale."""
+    out_f, in_f = w.shape
+    if granularity == "tensor":
+        return w.reshape(1, -1)
+    if granularity == "channel":
+        return w
+    if granularity == "group":
+        assert in_f % group_size == 0, f"{in_f} not divisible by group {group_size}"
+        return w.reshape(-1, group_size)
+    raise ValueError(granularity)
+
+
 def quantize(w, bits=8, granularity="channel", group_size=64, sym=True):
     """
     w: (out, in) float weight
@@ -31,15 +44,7 @@ def quantize(w, bits=8, granularity="channel", group_size=64, sym=True):
     returns q (int8 tensor, shaped like w), scale, zero (None if sym)
     """
     out_f, in_f = w.shape
-    if granularity == "tensor":
-        g = w.reshape(1, -1)
-    elif granularity == "channel":
-        g = w
-    elif granularity == "group":
-        assert in_f % group_size == 0, f"{in_f} not divisible by group {group_size}"
-        g = w.reshape(-1, group_size)
-    else:
-        raise ValueError(granularity)
+    g = group_view(w, granularity, group_size)
 
     if sym:
         qmax = 2 ** (bits - 1) - 1
@@ -48,7 +53,11 @@ def quantize(w, bits=8, granularity="channel", group_size=64, sym=True):
         zero = None
     else:
         qmax = 2 ** bits - 1
-        lo, hi = g.amin(dim=1, keepdim=True), g.amax(dim=1, keepdim=True)
+        # force 0 inside [lo, hi]: keeps zero in [0, qmax] (fits the uint8 it's
+        # stored in) and 0.0 stays exactly representable. without the clamps an
+        # all-positive group gives a negative zero-point that wraps to 255.
+        lo = g.amin(dim=1, keepdim=True).clamp(max=0)
+        hi = g.amax(dim=1, keepdim=True).clamp(min=0)
         scale = (hi - lo).clamp(min=1e-8) / qmax
         zero = torch.round(-lo / scale)
         q = torch.round(g / scale + zero).clamp(0, qmax)

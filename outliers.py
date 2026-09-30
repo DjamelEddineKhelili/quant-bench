@@ -18,6 +18,11 @@ from bench import load_windows
 THRESHOLD = 6.0   # the LLM.int8() paper's cutoff
 
 
+def channel_absmax(x):
+    """x: (..., channels) activations -> (channels,) biggest |value| seen per channel"""
+    return x.abs().reshape(-1, x.shape[-1]).amax(dim=0)
+
+
 @torch.no_grad()
 def main():
     ap = argparse.ArgumentParser()
@@ -38,7 +43,7 @@ def main():
             key = f"h{i}.{tag}"
 
             def hook(m, inp, out, key=key):
-                mx = inp[0].abs().reshape(-1, inp[0].shape[-1]).amax(dim=0)
+                mx = channel_absmax(inp[0])
                 stats[key] = torch.maximum(stats[key], mx) if key in stats else mx
             hooks.append(mod.register_forward_hook(hook))
 
